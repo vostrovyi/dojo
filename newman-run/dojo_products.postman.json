@@ -1,0 +1,697 @@
+{
+  "info": {
+    "_postman_id": "0cdb52e1-babb-459f-b7fe-afa009503970",
+    "name": "DOJO",
+    "description": "## 👀 Variables\n\n`{{`title`}}` ->> is coming from Pre-Request Script in the POST 'createProduct'\n\n`{{id}}` ->> is coming from Post-response Script in the POST 'createProduct'",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51453377",
+    "_collection_link": "https://go.postman.co/collection/51453377-0cdb52e1-babb-459f-b7fe-afa009503970?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "getAllProducts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let body;",
+                  "let requestName = pm.info.requestName;",
+                  "",
+                  "try {",
+                  "    body = pm.response.json();",
+                  "} catch (e) {",
+                  "    body = null;",
+                  "}",
+                  "",
+                  "pm.test(requestName + \": \" + \"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(requestName + \": \" + \"Response has header 'Content-Type'\", function () {",
+                  "    pm.response.to.have.header(\"Content-Type\");",
+                  "});",
+                  "",
+                  "pm.test(requestName + \": \" + \"Check body has title\", function () {",
+                  "    pm.expect(body[0]).to.have.property(\"title\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{productsUrl}}",
+              "host": [
+                "{{productsUrl}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "createProduct",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.collectionVariables.set(\"title\", pm.variables.replaceIn('{{$randomProductName}}'));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let body;",
+                  "let requestName = pm.info.requestName;",
+                  "let title = pm.collectionVariables.get(\"title\");",
+                  "",
+                  "try {",
+                  "    body = pm.response.json();",
+                  "} catch (e) {",
+                  "    body = null;",
+                  "}",
+                  "",
+                  "pm.test(requestName + \": \" + \"Status code is 201\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(requestName + \": \" + \"Status code name has string\", function () {",
+                  "    pm.response.to.have.status(\"Created\");",
+                  "});",
+                  "",
+                  "pm.test(requestName + \": \" + \"Check response header 'Content-Type'\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(requestName + \": \" + \"Check price\", function () {",
+                  "    pm.expect(body.price).to.eql(123);",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"id\", body.id);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"{{title}}\",\n  \"slug\": \"handmade-fresh-table\",\n  \"price\": 123,\n  \"description\": \"Andy shoes are designed to keeping in...\",\n  \"categoryId\": 1,\n  \"images\": [\n    \"https://placehold.co/600x400\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{productsUrl}}",
+              "host": [
+                "{{productsUrl}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getSingleProductById",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let body;",
+                  "let requestName = pm.info.requestName;",
+                  "",
+                  "try {",
+                  "    body = pm.response.json();",
+                  "} catch (e) {",
+                  "    body = null;",
+                  "}",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Check id\", function () {",
+                  "    let expectedId = pm.collectionVariables.get(\"id\");",
+                  "    let actualId = body.id;",
+                  "    pm.expect(expectedId).to.eql(actualId);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Check title\", function () {",
+                  "    let expectedTitle = pm.collectionVariables.get(\"title\");",
+                  "    let actualTitle = body.title",
+                  "    pm.expect(expectedTitle).to.eql(actualTitle);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Check price\", function () {",
+                  "    pm.expect(body.price).to.eql(123);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{productsUrl}}/{{id}}",
+              "host": [
+                "{{productsUrl}}"
+              ],
+              "path": [
+                "{{id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateProduct",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let body;",
+                  "let requestName = pm.info.requestName;",
+                  "",
+                  "try {",
+                  "    body = pm.response.json();",
+                  "} catch (e) {",
+                  "    body = null;",
+                  "}",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Check id\", function () {",
+                  "    let expectedId = pm.collectionVariables.get(\"id\");",
+                  "    let actualId = body.id;",
+                  "    pm.expect(expectedId).to.eql(actualId);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Check title\", function () {",
+                  "    let actualTitle = body.title",
+                  "    pm.expect(\"Changed title\").to.eql(actualTitle);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Check price\", function () {",
+                  "    pm.expect(body.price).to.eql(100);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Changed title\",\n  \"slug\": \"changed-title\",\n  \"price\": 100,\n  \"images\": [\"https://placehold.co/600x400\"]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{productsUrl}}/{{id}}",
+              "host": [
+                "{{productsUrl}}"
+              ],
+              "path": [
+                "{{id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getUpdatedSingleProductById",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let body;",
+                  "let requestName = pm.info.requestName;",
+                  "",
+                  "try {",
+                  "    body = pm.response.json();",
+                  "} catch (e) {",
+                  "    body = null;",
+                  "}",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Check id\", function () {",
+                  "    let expectedId = pm.collectionVariables.get(\"id\");",
+                  "    let actualId = body.id;",
+                  "    pm.expect(expectedId).to.eql(actualId);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Check title\", function () {",
+                  "    let actualTitle = body.title",
+                  "    pm.expect(\"Changed title\").to.eql(actualTitle);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \" + \"Check price\", function () {",
+                  "    pm.expect(body.price).to.eql(100);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{productsUrl}}/{{id}}",
+              "host": [
+                "{{productsUrl}}"
+              ],
+              "path": [
+                "{{id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pagination10",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let body;",
+                  "let requestName = pm.info.requestName;",
+                  "",
+                  "try {",
+                  "    body = pm.response.json();",
+                  "} catch (e) {",
+                  "    body = null;",
+                  "}",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Response is an array\", function () {",
+                  "    pm.expect(body).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Response contains exactly 10 items (limit check)\", function () {",
+                  "    pm.expect(body).to.be.an(\"array\").that.has.lengthOf(10);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"First product has correct data structure\", function () {",
+                  "    pm.expect(body).to.not.be.empty;",
+                  "    ",
+                  "    let firstProduct = body[0];",
+                  "    ",
+                  "    // перевіряємо наявність та тип основних полів",
+                  "    pm.expect(firstProduct).to.have.property(\"id\").that.is.a(\"number\");",
+                  "    pm.expect(firstProduct).to.have.property(\"title\").that.is.a(\"string\");",
+                  "    pm.expect(firstProduct).to.have.property(\"price\").that.is.a(\"number\");",
+                  "    ",
+                  "    // перевіряємо вкладені об'єкти (категорія та зображення)",
+                  "    pm.expect(firstProduct).to.have.property(\"category\").that.is.an(\"object\");",
+                  "    pm.expect(firstProduct.category).to.have.property(\"name\").that.is.a(\"string\");",
+                  "    ",
+                  "    pm.expect(firstProduct).to.have.property(\"images\").that.is.an(\"array\");",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Response time is less than 1000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{productsUrl}}?offset=0&limit=10",
+              "host": [
+                "{{productsUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "pagination20",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let body;",
+                  "let requestName = pm.info.requestName;",
+                  "",
+                  "try {",
+                  "    body = pm.response.json();",
+                  "} catch (e) {",
+                  "    body = null;",
+                  "}",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Response contains exactly 20 items (limit check)\", function () {",
+                  "    pm.expect(body).to.be.an(\"array\").that.has.lengthOf(20);",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{productsUrl}}?offset=0&limit=20",
+              "host": [
+                "{{productsUrl}}"
+              ],
+              "query": [
+                {
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "filterByPriceRange",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let body;",
+                  "let requestName = pm.info.requestName;",
+                  "",
+                  "try {",
+                  "    body = pm.response.json();",
+                  "} catch (e) {",
+                  "    body = null;",
+                  "}",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Status code is 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Response is an array\", function () {",
+                  "    pm.expect(body).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"All products are within the price range (90 - 1000)\", function () {",
+                  "    pm.expect(body).to.be.an('array').that.is.not.empty;",
+                  "    ",
+                  "    body.forEach(function(product) {",
+                  "        pm.expect(product).to.have.property(\"price\").that.is.a(\"number\");",
+                  "        ",
+                  "        // Перевіряємо, що ціна >= 90 та <= 1000",
+                  "        pm.expect(product.price).to.be.at.least(90, \"Price is lower than 90\");",
+                  "        pm.expect(product.price).to.be.at.most(1000, \"Price is higher than 1000\");",
+                  "    });",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"No products are out of bounds (< 90 or > 1000)\", function () {",
+                  "    let invalidProducts = body.filter(function(product) {",
+                  "        return product.price < 90 || product.price > 1000;",
+                  "    });",
+                  "    ",
+                  "    pm.expect(invalidProducts).to.be.empty; ",
+                  "    //pm.expect(invalidProducts.length).to.eql(0);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{productsUrl}}/?price_min=90&price_max=1000",
+              "host": [
+                "{{productsUrl}}"
+              ],
+              "path": [
+                ""
+              ],
+              "query": [
+                {
+                  "key": "price_min",
+                  "value": "90"
+                },
+                {
+                  "key": "price_max",
+                  "value": "1000"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteProduct",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let requestName = pm.info.requestName;",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Check response header 'Content-Type'\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/html\");",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Check html text in response\", function () {",
+                  "    pm.expect(pm.response.text()).to.include(\"true\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{productsUrl}}/{{id}}",
+              "host": [
+                "{{productsUrl}}"
+              ],
+              "path": [
+                "{{id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "repeatDeleteProduct",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let requestName = pm.info.requestName;",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Check error message\", function () {",
+                  "    let msg = pm.response.json().message;",
+                  "    pm.expect(msg).contain(\"Could not find any entity of type\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{productsUrl}}/{{id}}",
+              "host": [
+                "{{productsUrl}}"
+              ],
+              "path": [
+                "{{id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getSingleProductByIdAfterCleanUp",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let requestName = pm.info.requestName;",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Status code is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Status code name has string\", function () {",
+                  "    pm.response.to.have.status(\"Bad Request\");",
+                  "});",
+                  "",
+                  "pm.test(requestName +\": \"+ \"Check error message\", function () {",
+                  "    let msg = pm.response.json().message;",
+                  "    pm.expect(msg).contain(\"Could not find any entity of type\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{productsUrl}}/{{id}}",
+              "host": [
+                "{{productsUrl}}"
+              ],
+              "path": [
+                "{{id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "url",
+      "value": ""
+    },
+    {
+      "key": "productsUrl",
+      "value": ""
+    },
+    {
+      "key": "title",
+      "value": ""
+    },
+    {
+      "key": "id",
+      "value": ""
+    },
+    {
+      "key": "requestName",
+      "value": "",
+      "disabled": true
+    }
+  ]
+}
