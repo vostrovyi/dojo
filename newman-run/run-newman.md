@@ -1,6 +1,11 @@
 # Newman Test Execution
 
 ## Basic Test Run
+Navigate to executable folder
+
+```bash
+cd dojo/newman-run
+```
 Execute the Postman collection with test data:
 
 ```bash
